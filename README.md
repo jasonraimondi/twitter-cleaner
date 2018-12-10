@@ -1,6 +1,8 @@
 # Twitter Cleaner
 
-This container is designed as a "run once at intervals" (ie. crontab) rather than a leave running kind of situation.
+This fork is designed as a "keep it running" container and it will keep the cronjob alive and running without having to add it to the host machine.
+
+Please modify [the crontab](container/crontab.txt) to switch your run intervols. 
 
 Depending on what you enable, it will delete and unfavourite/unlike tweets older than x days.
 
