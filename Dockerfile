@@ -3,19 +3,21 @@ LABEL maintainer="Jason Raimondi <jason@raimondi.us>"
 
 WORKDIR /app
 
-RUN apk update && apk add --update --no-cache ruby-dev build-base dcron
+RUN apk update && apk add --update --no-cache ruby-dev build-base dcron supervisor
 
-COPY app/Gemfile /app/Gemfile
+COPY app/Gemfile* /app/
 
 RUN bundle install --jobs=3
 
-ADD app /app
+COPY app /app/
 
-ADD crontab.txt /app/crontab.txt
-ADD scripts/docker-entrypoint.sh /docker-entrypoint.sh
+COPY container/crontab.txt /app/crontab.txt
+COPY container/scripts/docker-entrypoint.sh /docker-entrypoint.sh
+COPY container/supervisor.d /etc/supervisor.d
+
 RUN chmod +x /docker-entrypoint.sh \
-    && /usr/bin/crontab /app/crontab.txt
+    && /usr/bin/crontab /app/crontab.txt \
+    && mkdir -p /var/logs/twitter-cleaner
 
-ENTRYPOINT /docker-entrypoint.sh
-
-CMD ["/usr/sbin/crond", "-f", "-l", "8"]
+ENTRYPOINT ["supervisord"]
+CMD ["--nodaemon", "--configuration", "/etc/supervisord.conf"]
