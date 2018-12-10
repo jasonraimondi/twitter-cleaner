@@ -1,4 +1,5 @@
 FROM ruby:2.4.4-alpine
+
 LABEL maintainer="Jason Raimondi <jason@raimondi.us>"
 
 WORKDIR /app
@@ -10,7 +11,6 @@ COPY app/Gemfile* /app/
 RUN bundle install --jobs=3
 
 COPY app /app/
-
 COPY container/crontab.txt /app/crontab.txt
 COPY container/scripts/docker-entrypoint.sh /docker-entrypoint.sh
 COPY container/supervisor.d /etc/supervisor.d
