@@ -1,11 +1,21 @@
-FROM ruby:2.4.4-alpine3.7
-LABEL maintainer="Michael Usher <root@usher.is>"
+FROM ruby:2.4.4-alpine
+LABEL maintainer="Jason Raimondi <jason@raimondi.us>"
 
-RUN apk --update add --virtual build_deps ruby-dev build-base
+WORKDIR /app
+
+RUN apk update && apk add --update --no-cache ruby-dev build-base dcron
+
+COPY app/Gemfile /app/Gemfile
+
+RUN bundle install --jobs=3
 
 ADD app /app
+
+ADD crontab.txt /app/crontab.txt
 ADD scripts/docker-entrypoint.sh /docker-entrypoint.sh
-RUN chmod +x /docker-entrypoint.sh /app/delete.rb /app/unfav.rb
-RUN cd /app && bundle install --jobs=3 && apk del build_deps
+RUN chmod +x /docker-entrypoint.sh \
+    && /usr/bin/crontab /app/crontab.txt
 
 ENTRYPOINT /docker-entrypoint.sh
+
+CMD ["/usr/sbin/crond", "-f", "-l", "8"]
