@@ -1,6 +1,6 @@
 # Twitter Cleaner
 
-This fork is designed as a "keep it running" container and it will keep the cronjob alive and running without having to add it to the host machine.
+**This fork is designed as a "keep it running" container and it will keep the cronjob alive and running without having to add it to the host machine.**
 
 Please modify [the crontab](container/crontab.txt) to switch your run intervols. 
 
